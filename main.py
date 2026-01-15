@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, HTTPException, status
 import pandas as pd
 from tenacity import retry_if_exception
 
+import db
 import models
 # import db
 
@@ -41,10 +42,17 @@ def post_terrorists_file(file: UploadFile):
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail={'detail': 'Not content valid to save in MongoDB'})
 
-    # is_saved = db.save_file(top)
-    # if not is_saved: return HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail={'detail': 'Database unavailable'})
+    try:
+        client = db.client_connection()
+        collection = db.get_collection(client)
+        is_saved = db.save_documents(collection, top)
 
-    return {'message': 'is_saved', 'top 5': top}
+        if not is_saved: raise Exception('Database unavailable')
+        return {'message': 'is_saved', 'top 5': top}
+
+    except Exception as e:
+        return HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail={'detail': str(e)})
+
 
 
 
