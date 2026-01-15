@@ -1,0 +1,5 @@
+# to build the image:
+docker build -t yosefshoval/threat-api:v1 .
+
+docker push yosefshoval/threat-api:v1
+
