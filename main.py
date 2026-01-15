@@ -1,7 +1,9 @@
 from fastapi import FastAPI, UploadFile, HTTPException, status
 import pandas as pd
+from tenacity import retry_if_exception
+
 import models
-import db
+# import db
 
 """ This file is to router, get the file and forward it to models to process it. Then return message. """
 
@@ -25,22 +27,32 @@ def post_terrorists_file(file: UploadFile):
         sorted_df = models.sort_file(df)
 
     except Exception as e:
-        return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail={'detail': str(e)})
+        return HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail={'detail': str(e)})
 
-    top = models.clean_top_5(sorted_df)
-    if not top: return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail={'detail': 'Not content valid to save in MongoDB'})
+    try: top = models.clean_top_5(sorted_df)
+    except Exception as e:
+        return HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail={'detail': str(e)})
 
-    is_saved = db.save_file(top)
-    if not is_saved: return HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail={'detail': 'Database unavailable'})
+    if not top: return HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        detail={'detail': 'Not content valid to save in MongoDB'})
 
-    return {'message': is_saved, 'top 5': top}
+    # is_saved = db.save_file(top)
+    # if not is_saved: return HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail={'detail': 'Database unavailable'})
+
+    return {'message': 'is_saved', 'top 5': top}
 
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        app=app,
+        app='main:app',
         host='0.0.0.0',
-        port=8000
+        port=8000,
+        reload=True
     )

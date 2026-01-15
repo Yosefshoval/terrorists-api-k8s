@@ -1,3 +1,5 @@
+import json
+
 from pandas import DataFrame
 from pydantic import BaseModel, Field
 from typing import Annotated, Optional
@@ -19,7 +21,7 @@ def sort_file(file: DataFrame):
 
 
 def clean_top_5(df: DataFrame):
-    df = df['name', 'location', 'danger_rate']
+    df.drop(columns=['age', 'group', 'last_seen', 'notes'])
 
     for terrorist in df:
         try:
@@ -33,5 +35,5 @@ def clean_top_5(df: DataFrame):
 
     return {
         'count' : length,
-        'top':list(df)
+        'top': df
             }
