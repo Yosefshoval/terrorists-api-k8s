@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+    tier: database
+spec:
+  ports:
+  - port: 27017
+    TargetPort: 27017
+  clusterIP: None
+  selector:
+    app: mongo
