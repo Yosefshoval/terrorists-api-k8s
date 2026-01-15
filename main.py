@@ -1,3 +1,5 @@
+import json
+
 from fastapi import FastAPI, UploadFile, HTTPException, status
 import pandas as pd
 from tenacity import retry_if_exception
@@ -41,6 +43,8 @@ def post_terrorists_file(file: UploadFile):
     if not top: return HTTPException(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         detail={'detail': 'Not content valid to save in MongoDB'})
+
+    return json.dumps(top)
 
     try:
         client = db.client_connection()

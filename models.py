@@ -21,7 +21,7 @@ def sort_file(file: DataFrame):
 
 
 def clean_top_5(df: DataFrame):
-    df.drop(columns=['age', 'group', 'last_seen', 'notes'])
+    df = df.drop(['age', 'group', 'last_seen', 'notes'], axis=1)
 
     for terrorist in df:
         try:
@@ -35,5 +35,5 @@ def clean_top_5(df: DataFrame):
 
     return {
         'count' : length,
-        'top': df
+        'top': df.to_json(orient='records')
             }

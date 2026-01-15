@@ -9,8 +9,8 @@ spec:
   type: NodePort
   ports:
   - port: 8000
-    TargetPort: 8000
-    NodePort: 30080
+    nodePort: 30080
+    targetPort: 8000
   selector:
     app: threat-api
     tier: backend

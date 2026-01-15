@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
   - port: 27017
-    TargetPort: 27017
+    targetPort: 27017
   clusterIP: None
   selector:
     app: mongo
